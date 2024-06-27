@@ -1,10 +1,11 @@
 "use client";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
-import { storage , ref} from "../api/auth/lib/firebase";
-import { v4 as uuidv4 } from "uuid";
+import { storage } from "../api/auth/lib/firebase";
 
-const UploadProperty = () => {
+import React from "react";
+
+const page = () => {
   const { data: session } = useSession();
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");
@@ -35,7 +36,7 @@ const UploadProperty = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!session) return;
-    const res = await fetch('upload', {
+    const res = await fetch("upload", {
       method: "POST",
       body: JSON.stringify({
         title,
@@ -52,7 +53,7 @@ const UploadProperty = () => {
     });
     if (res.ok) {
       console.log("Property uploaded successfully");
-      alert("Property uploaded successfully" + " " + title);
+      alert("Property uploaded successfully");
     } else {
       console.error("Failed to upload property");
     }
@@ -68,60 +69,60 @@ const UploadProperty = () => {
         placeholder="Title"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        required
+        
       />
       <input
         type="number"
         placeholder="Price"
         value={price}
         onChange={(e) => setPrice(e.target.value)}
-        required
+        
       />
       <input
         type="text"
         placeholder="Location"
         value={location}
         onChange={(e) => setLocation(e.target.value)}
-        required
+        
       />
       <textarea
         placeholder="Description"
         value={description}
         onChange={(e) => setDescription(e.target.value)}
-        required
+        
       />
       <input
         type="number"
         placeholder="Bedrooms"
         value={bedrooms}
         onChange={(e) => setBedrooms(e.target.value)}
-        required
+        
       />
       <input
         type="number"
         placeholder="Bathrooms"
         value={bathrooms}
         onChange={(e) => setBathrooms(e.target.value)}
-        required
+        
       />
       <input
         type="text"
         placeholder="Area"
         value={area}
         onChange={(e) => setArea(e.target.value)}
-        required
+        
       />
       <input
         type="text"
         placeholder="Key Features"
         value={keyFeatures}
         onChange={(e) => setKeyFeatures(e.target.value)}
-        required
+        
       />
-      <input type="file" multiple onChange={handleImageUpload} required />
+      <input type="file" multiple onChange={handleImageUpload}  />
       <button type="submit">Upload Property</button>
     </form>
   );
 };
 
-export default UploadProperty;
+export default page;
