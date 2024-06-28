@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
-import { storage } from "../api/auth/lib/firebase";
+import { storage } from "../../lib/firebase";
 
 import React from "react";
 
