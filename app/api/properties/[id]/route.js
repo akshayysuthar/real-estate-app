@@ -12,6 +12,6 @@ export async function PUT(request, { params }) {
 export async function GET(request, { params }) {
   const { id } = params;
   await connectMongodb();
-  const property = await Property.findOne({ _id, id });
-  return NextResponse.json({ property }, { status: 200 });
+  const property = await Property.findOne({ _id: id });
+  return NextResponse.json({ Property }, { status: 200 });
 }
