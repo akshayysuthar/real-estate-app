@@ -5,10 +5,51 @@ import { AwardFill } from "react-bootstrap-icons";
 
 // to upload data in db
 export async function POST(request) {
-  const { title, price } = await request.json();
-  await connectMongodb();
-  await Property.create({ title, price });
-  return NextResponse.json({ message: "Properties uploaded" }, { status: 201 });
+  try {
+    const {
+      title,
+      price,
+      name,
+      email,
+      location,
+      description,
+      bedrooms,
+      bathrooms,
+      area,
+      keyFeatures,
+      images,
+    } = await request.json();
+
+    if (!title || !price || !name || !email) {
+      return NextResponse.json({ error: "Invalid input" }, { status: 400 });
+    }
+
+    await connectMongodb();
+
+    const newProperty = new Property({
+      title,
+      price,
+      name,
+      email,
+      location,
+      description,
+      bedrooms,
+      bathrooms,
+      area,
+      keyFeatures,
+      images,
+    });
+
+    await newProperty.save();
+
+    return NextResponse.json(
+      { message: "Property created successfully" },
+      { status: 201 }
+    );
+  } catch (error) {
+    console.log("Server error", error);
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
+  }
 }
 
 // to get data from db

@@ -12,7 +12,7 @@ const getPropertyById = async (id) => {
     }
 
     return res.json();
-    console.log(json)
+    console.log(json);
   } catch (error) {
     console.error("Error loading property:", error);
   }
@@ -21,12 +21,8 @@ const getPropertyById = async (id) => {
 export default async function Page({ params }) {
   const { id } = params;
   console.log("Id :", id);
-  const title = await getPropertyById(id);
+  const { title, price } = await getPropertyById(id);
   console.log(title);
 
-  return (
-    <h1>hi {id}</h1>
-
-    // <EditProperty id={id} title={title} price={price} />
-  );
+  return <EditProperty id={id} title={title} price={price} />;
 }
