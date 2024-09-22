@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { MapPin } from "lucide-react";
 import React, { useState } from "react";
 
-const GooglePlacesSearch = () => {
+const GooglePlacesSearch = ({ onSelectLocation }) => {
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
 
@@ -21,11 +21,10 @@ const GooglePlacesSearch = () => {
   };
 
   const handleSelect = (place) => {
-    // Set the query to the selected place name
     setQuery(place.display_name);
-    // Log the coordinates (latitude and longitude)
-    console.log(`Latitude: ${place.lat}, Longitude: ${place.lon}`);
-    // Clear suggestions after selection
+    // Pass the selected address and coordinates to the parent component
+    onSelectLocation(place.display_name, place.lat, place.lon);
+    // Clear the suggestions
     setSuggestions([]);
   };
 
