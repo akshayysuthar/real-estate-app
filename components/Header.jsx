@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { UserButton, useUser } from "@clerk/nextjs";
 import { Plus } from "lucide-react";
 import Image from "next/image";
+import main from '@/public/logo.svg'
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
@@ -24,7 +25,7 @@ const Header = () => {
     >
       <div className="flex gap-10 items-center ">
         <Link href={"/"}>
-          <Image height={150} width={150} src={"./logo.svg"} alt="main-logo" />
+          <Image height={150} width={150} className="w-auto h-auto" src={main} alt="main-logo" />
         </Link>
         <ul className="md:flex hidden gap-10">
           <Link href={"/forsale"}>
@@ -57,7 +58,7 @@ const Header = () => {
         </ul>
       </div>
       <div className="flex gap-2 items-center">
-        <Link href={"add-new-listing"}>
+        <Link href={"/add-new-listing"}>
           <Button className="flex gap-2">
             <Plus /> Post Your Ad
           </Button>

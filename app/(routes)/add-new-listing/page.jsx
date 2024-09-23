@@ -1,5 +1,6 @@
 "use client";
-import GooglePlacesSearch from "@/app/components/GooglePlacesSearch";
+
+import GooglePlacesSearch from "@/components/GooglePlacesSearch";
 import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/sonner";
 import { supabase } from "@/utils/supabase/client";

@@ -1,11 +1,10 @@
-import React from "react";
-import Header from "./components/Header";
+import Header from "@/components/Header";
 
 const Provider = ({ children }) => {
   return (
     <div>
       <Header />
-      <div className="mt-20">{children}</div>
+      <div className="mt-28 mx-auto">{children}</div>
     </div>
   );
 };
