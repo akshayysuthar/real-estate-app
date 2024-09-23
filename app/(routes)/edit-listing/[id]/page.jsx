@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
@@ -17,14 +17,29 @@ import { supabase } from "@/utils/supabase/client"; //  Supabase client is set u
 import { usePathname, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useUser } from "@clerk/nextjs";
+import { Loader } from "lucide-react";
+import { FileUpload } from "@/components/ui/file-upload";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 const EditListing = ({ params }) => {
   const { user } = useUser();
   const router = useRouter();
+  const [loader, setLoader] = useState(false);
+  const [listing, setListing] = useState([]);
   // to get id from url
   //   const params = usePathname();
   useEffect(() => {
-    console.log(params.id);
+    console.log("Id :" + params.id);
     user && verityUserRecord();
   }, [user]);
 
@@ -35,8 +50,14 @@ const EditListing = ({ params }) => {
       .select("*")
       .eq("createdBy", user?.primaryEmailAddress.emailAddress)
       .eq("id", params.id);
-    if (data?.length > 0) {
-      //   router.replace("/");
+
+    if (data) {
+      setListing([data[0]]);
+      console.log(listing);
+    }
+
+    if (data?.length <= 0) {
+      router.replace("/");
     }
   };
 
@@ -58,20 +79,29 @@ const EditListing = ({ params }) => {
           description: values.description,
         },
       ])
-      .eq("id", params.split("/")[2])
+      .eq("id", params.id)
       .select();
 
     if (data) {
+      setLoader(false);
       console.log(data);
-      toast("Listing updated and Puslished");
+      toast("Listing updated");
+      //   router.push("/");
     } else {
       console.error();
+      setLoader(false);
     }
+  };
 
-    if (error) {
-      console.error("Error saving listing:", error);
-    } else {
-      console.log("Listing saved successfully!", data);
+  const publishBtnHandler = async () => {
+    const { data, error } = await supabase
+      .from("listing")
+      .update({ active: "true" })
+      .eq("id", params?.id)
+      .select();
+    if (data) {
+      setLoader(false);
+      toast("Listing published");
     }
   };
 
@@ -93,6 +123,8 @@ const EditListing = ({ params }) => {
           price: "",
           hoa: "",
           description: "",
+          profileName: user?.imageUrl,
+          fullName: user?.fullName,
         }}
         onSubmit={async (values) => {
           console.log(values);
@@ -114,6 +146,7 @@ const EditListing = ({ params }) => {
                   <RadioGroup
                     name="type"
                     value={values.type}
+                    defaultValue={listing?.type}
                     onValueChange={(v) => setFieldValue("type", v)} // Correct way to update Formik values
                     onBlur={handleBlur}
                   >
@@ -132,6 +165,7 @@ const EditListing = ({ params }) => {
                   <Select
                     name="propertyType"
                     value={values.propertyType}
+                    defaultValue={listing?.propertyType}
                     onValueChange={(v) => setFieldValue("propertyType", v)} // Use setFieldValue to update
                     onBlur={handleBlur}
                   >
@@ -155,6 +189,7 @@ const EditListing = ({ params }) => {
                   <Input
                     type="number"
                     name="bedroom"
+                    defaultValue={listing?.bedroom}
                     onChange={handleChange}
                     onBlur={handleBlur}
                     value={values.bedroom}
@@ -167,6 +202,7 @@ const EditListing = ({ params }) => {
                     type="number"
                     name="bathroom"
                     onChange={handleChange}
+                    defaultValue={listing?.bathroom}
                     onBlur={handleBlur}
                     value={values.bathroom}
                     placeholder="Ex. 2"
@@ -178,6 +214,7 @@ const EditListing = ({ params }) => {
                     type="number"
                     name="builtIn"
                     onChange={handleChange}
+                    defaultValue={listing?.builtIn}
                     onBlur={handleBlur}
                     value={values.builtIn}
                     placeholder="Ex. 1900"
@@ -192,6 +229,7 @@ const EditListing = ({ params }) => {
                     type="number"
                     name="parking"
                     onChange={handleChange}
+                    defaultValue={listing?.parking}
                     onBlur={handleBlur}
                     value={values.parking}
                     placeholder="Ex. 2"
@@ -203,6 +241,7 @@ const EditListing = ({ params }) => {
                     type="number"
                     name="lotSize"
                     onChange={handleChange}
+                    defaultValue={listing?.lotSize}
                     onBlur={handleBlur}
                     value={values.lotSize}
                     placeholder="Ex. 2000"
@@ -214,6 +253,7 @@ const EditListing = ({ params }) => {
                     type="number"
                     name="area"
                     onChange={handleChange}
+                    defaultValue={listing?.area}
                     onBlur={handleBlur}
                     value={values.area}
                     placeholder="Ex. 1900"
@@ -228,6 +268,7 @@ const EditListing = ({ params }) => {
                     type="number"
                     name="price"
                     onChange={handleChange}
+                    defaultValue={listing?.price}
                     onBlur={handleBlur}
                     value={values.price}
                     placeholder="14000"
@@ -241,6 +282,7 @@ const EditListing = ({ params }) => {
                     type="number"
                     name="hoa"
                     onChange={handleChange}
+                    defaultValue={listing?.hoa}
                     onBlur={handleBlur}
                     value={values.hoa}
                     placeholder="100"
@@ -254,22 +296,39 @@ const EditListing = ({ params }) => {
                   <Textarea
                     name="description"
                     onChange={handleChange}
+                    defaultValue={listing?.description}
                     onBlur={handleBlur}
                     value={values.description}
                     placeholder="Type your description of your listing"
                   />
                 </div>
               </div>
+              <div className="grid grid-cols-1 gap-10">
+                <div className="flex flex-col gap-2">
+                  <h2 className="text-lg text-slate-500">
+                    Upload Property Iamges
+                  </h2>
+                  <FileUpload id={params.id} />
+                </div>
+              </div>
 
               <div className="flex gap-4 mt-5 justify-end">
                 <Button
                   variant="outline"
+                  onClick={() => handleSaveListing()}
                   className="text-primary border-primary"
                   type="submit"
                 >
-                  Save
+                  {loader ? <Loader className="animate-spin" /> : "Save"}
                 </Button>
-                <Button type="submit">Save & Publish</Button>
+                <Button
+                  variant="outline"
+                  onClick={() => publishBtnHandler()}
+                  className="text-primary border-primary"
+                  type="submit"
+                >
+                  {loader ? <Loader className="animate-spin" /> : "Publish"}
+                </Button>
               </div>
             </div>
           </form>

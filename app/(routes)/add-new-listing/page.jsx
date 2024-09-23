@@ -2,16 +2,16 @@
 
 import GooglePlacesSearch from "@/components/GooglePlacesSearch";
 import { Button } from "@/components/ui/button";
-import { Toaster } from "@/components/ui/sonner";
 import { supabase } from "@/utils/supabase/client";
 import { useUser } from "@clerk/nextjs";
 import { Loader } from "lucide-react";
-
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { toast } from "sonner";
 
 const AddNewListing = () => {
   const { user } = useUser();
+  const router = useRouter();
   const [loader, setLoader] = useState(false);
   const [location, setLocation] = useState({
     address: "",
@@ -30,22 +30,26 @@ const AddNewListing = () => {
   const nextHandler = async () => {
     // console.log(location);
     setLoader(true);
-    const { data, error } = await supabase.from("listing").insert([
-      {
-        address: location.address,
-        coordinates: { lat: location.lat, lon: location.lon }, // Save coordinates as JSON
-        createdBy: user.primaryEmailAddress.emailAddress,
-      },
-    ]);
-    //   .select(); // Use select to return inserted data
+    const { data, error } = await supabase
+      .from("listing")
+      .insert([
+        {
+          address: location.address,
+          coordinates: { lat: location.lat, lon: location.lon }, // Save coordinates as JSON
+          createdBy: user.primaryEmailAddress.emailAddress,
+        },
+      ])
+      .select(); // Use select to return inserted data
 
-    if (error) {
-      console.error("Error inserting data:", error.message);
-      toast("Server side error");
+    if (data) {
+      setLoader(false);
+      console.log("Data inserted successfully", data);
+      toast("New Address is added for listing!");
+      router.replace("/edit-listing/" + data[0].id);
     } else {
       setLoader(false);
-      console.log("Data inserted successfully");
-      toast("New Address is added for listing!");
+      console.error("Error inserting data:", error.message);
+      toast("Server side error");
     }
   };
 
