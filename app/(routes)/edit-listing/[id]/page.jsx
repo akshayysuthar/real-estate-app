@@ -62,34 +62,45 @@ const EditListing = ({ params }) => {
   };
 
   const handleSaveListing = async (values) => {
+    console.log("Values:", values); // Check if the values object contains all required fields
+
+    if (!values || !values.type) {
+      console.error(
+        "Error: Missing required listing values, particularly type."
+      );
+      return;
+    }
+
     const { data, error } = await supabase
-      .from("listing") // the table is named 'listing'
+      .from("listing")
       .update([
         {
-          type: values.type,
-          propertyType: values.propertyType,
-          bedroom: values.bedroom,
-          bathroom: values.bathroom,
-          builtIn: values.builtIn,
-          parking: values.parking,
-          lotSize: values.lotSize,
-          area: values.area,
-          price: values.price,
-          hoa: values.hoa,
-          description: values.description,
+          type: values.type || "defaultType", // Provide a default value for type
+          propertyType: values.propertyType || "defaultPropertyType", // Default fallback if missing
+          bedroom: values.bedroom || 0, // Add default for numeric values like bedroom
+          bathroom: values.bathroom || 0,
+          builtIn: values.builtIn || "N/A", // Default for strings
+          parking: values.parking || 0,
+          lotSize: values.lotSize || 0,
+          area: values.area || 0,
+          price: values.price || 0,
+          hoa: values.hoa || "None",
+          description: values.description || "No description available",
         },
       ])
       .eq("id", params.id)
       .select();
 
+    if (error) {
+      console.error("Error updating listing:", error.message);
+      setLoader(false);
+      return;
+    }
+
     if (data) {
       setLoader(false);
       console.log(data);
       toast("Listing updated");
-      //   router.push("/");
-    } else {
-      console.error();
-      setLoader(false);
     }
   };
 
@@ -146,7 +157,7 @@ const EditListing = ({ params }) => {
                   <RadioGroup
                     name="type"
                     value={values.type}
-                    defaultValue={listing?.type}
+                    // defaultValue={listing?.type}
                     onValueChange={(v) => setFieldValue("type", v)} // Correct way to update Formik values
                     onBlur={handleBlur}
                   >

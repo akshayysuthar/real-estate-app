@@ -34,7 +34,7 @@ const Header = () => {
                 path == "/forsale" && "text-primary"
               } "`}
             >
-              For Sale
+              For Sell
             </li>
           </Link>
           <Link href={"/forrent"}>
