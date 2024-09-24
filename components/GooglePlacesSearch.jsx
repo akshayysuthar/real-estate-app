@@ -3,9 +3,10 @@ import { Input } from "@/components/ui/input";
 import { MapPin } from "lucide-react";
 import React, { useState } from "react";
 
-const GooglePlacesSearch = ({ onSelectLocation }) => {
+const GooglePlacesSearch = ({ onSelectLocation, coordinates }) => {
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
+
 
   const handleSearch = async (input) => {
     setQuery(input);
@@ -15,6 +16,7 @@ const GooglePlacesSearch = ({ onSelectLocation }) => {
       );
       const data = await response.json();
       setSuggestions(data);
+      // console.log(data);
     } else {
       setSuggestions([]);
     }
