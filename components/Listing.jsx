@@ -5,10 +5,18 @@ import GooglePlacesSearch from "./GooglePlacesSearch";
 import { Button } from "./ui/button";
 import FilterSection from "./FilterSection";
 
-const Listing = ({ listing, handleSearchCheck, searchAddress }) => {
-  //   console.log(listing);
-
+const Listing = ({
+  listing,
+  handleSearchCheck,
+  searchAddress,
+  setBathCount,
+  setBedCount,
+  setHomeType,
+  setPackingCount,
+  setSelectedCoordinates,
+}) => {
   const [address, setAddress] = useState();
+
   return (
     <div>
       <div className="p-3 flex gap-3 items-center">
@@ -16,6 +24,7 @@ const Listing = ({ listing, handleSearchCheck, searchAddress }) => {
           onSelectLocation={(v) => {
             searchAddress(v);
             setAddress(v);
+            setSelectedCoordinates(v);
           }}
         />
         <Button onClick={handleSearchCheck} className="flex gap-2">
@@ -23,14 +32,19 @@ const Listing = ({ listing, handleSearchCheck, searchAddress }) => {
           Search
         </Button>
       </div>
-      {/* {console.log(address)} */}
-      <FilterSection />
+      <FilterSection
+        setBathCount={setBathCount}
+        setBedCount={setBedCount}
+        setHomeType={setHomeType}
+        setPackingCount={setPackingCount}
+      />
 
       {address && (
         <div>
           <h2 className="text-xl ">
-            Found {listing?.length} Result in{" "}
-            <span className="text-primary font-bold">{address}</span>
+            Found {listing?.length}
+            {/* Result in
+            <span className="text-primary font-bold">{address}</span> */}
           </h2>
         </div>
       )}

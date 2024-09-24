@@ -23,13 +23,21 @@ const AddNewListing = () => {
   const handleLocationSelect = (address, lat, lon) => {
     setLocation({
       address,
-      lat,
-      lon,
+      lat: parseFloat(lat), // Ensure lat is a float
+      lon: parseFloat(lon), // Ensure lon is a float
     });
   };
+
   const nextHandler = async () => {
-    // console.log(location);
     setLoader(true);
+    
+    // Ensure coordinates are present
+    if (!location.lat || !location.lon) {
+      setLoader(false);
+      toast("Please select a valid location with coordinates.");
+      return;
+    }
+
     const { data, error } = await supabase
       .from("listing")
       .insert([
@@ -67,20 +75,6 @@ const AddNewListing = () => {
             {loader ? <Loader className="animate-spin" /> : "Next"}
           </Button>
         </div>
-        {/* Display the selected location data */}
-        {/* {location.lat && (
-          <div className="mt-5">
-            <p>
-              <strong>Selected Address:</strong> {location.address}
-            </p>
-            <p>
-              <strong>Latitude:</strong> {location.lat}
-            </p>
-            <p>
-              <strong>Longitude:</strong> {location.lon}
-            </p>
-          </div>
-        )} */}
       </div>
     </div>
   );

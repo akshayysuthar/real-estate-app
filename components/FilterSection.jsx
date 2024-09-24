@@ -8,10 +8,15 @@ import {
 } from "@/components/ui/select";
 import { BathIcon, Bed, BedDouble, Building, Car, House } from "lucide-react";
 
-const FilterSection = () => {
+const FilterSection = ({
+  setBathCount,
+  setBedCount,
+  setHomeType,
+  setPackingCount,
+}) => {
   return (
     <div className="px-3 py-2 grid grid-cols-3 md:flex gap-2">
-      <Select>
+      <Select onValueChange={setBedCount}>
         <SelectTrigger className="w-[180px]">
           <SelectValue placeholder="Bed" />
         </SelectTrigger>
@@ -36,7 +41,7 @@ const FilterSection = () => {
           </SelectItem>
         </SelectContent>
       </Select>
-      <Select>
+      <Select onValueChange={setBathCount}>
         <SelectTrigger className="w-[180px]">
           <SelectValue placeholder="Bath" />
         </SelectTrigger>
@@ -61,7 +66,7 @@ const FilterSection = () => {
           </SelectItem>
         </SelectContent>
       </Select>
-      <Select>
+      <Select onValueChange={setPackingCount}>
         <SelectTrigger className="w-[180px]">
           <SelectValue placeholder="Packing" />
         </SelectTrigger>
@@ -78,10 +83,9 @@ const FilterSection = () => {
               3+
             </h2>
           </SelectItem>
-
         </SelectContent>
       </Select>
-      <Select>
+      <Select onValueChange={setHomeType}>
         <SelectTrigger className="w-[180px]">
           <SelectValue placeholder="Home Type" />
         </SelectTrigger>

@@ -3,20 +3,19 @@ import { Input } from "@/components/ui/input";
 import { MapPin } from "lucide-react";
 import React, { useState } from "react";
 
-const GooglePlacesSearch = ({ onSelectLocation, coordinates }) => {
+const GooglePlacesSearch = ({ onSelectLocation }) => {
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
-
 
   const handleSearch = async (input) => {
     setQuery(input);
     if (input.length > 2) {
+      // Fetch data from OpenStreetMap Nominatim API
       const response = await fetch(
         `https://nominatim.openstreetmap.org/search?q=${input}&format=json&limit=5`
       );
       const data = await response.json();
       setSuggestions(data);
-      // console.log(data);
     } else {
       setSuggestions([]);
     }
@@ -24,10 +23,10 @@ const GooglePlacesSearch = ({ onSelectLocation, coordinates }) => {
 
   const handleSelect = (place) => {
     setQuery(place.display_name);
-    // Pass the selected address and coordinates to the parent component
-    onSelectLocation(place.display_name, place.lat, place.lon);
-    // Clear the suggestions
-    setSuggestions([]);
+
+    // Pass the selected place name and coordinates to the parent component
+    onSelectLocation(place.display_name, place.lat, place.lon); // Ensure to pass lat/lon as separate arguments
+    setSuggestions([]); // Clear the suggestions
   };
 
   return (
@@ -42,6 +41,7 @@ const GooglePlacesSearch = ({ onSelectLocation, coordinates }) => {
           onChange={(e) => handleSearch(e.target.value)}
         />
       </div>
+
       {/* Display Suggestions */}
       {suggestions.length > 0 && (
         <div className="bg-white border border-gray-300 rounded-md mt-2 w-full z-10">
