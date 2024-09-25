@@ -200,7 +200,7 @@ const page = () => {
                 </div>
               </form> */}
 
-              <SignIn />
+              <SignIn fallbackRedirectUrl="/" />
             </div>
           </main>
         </div>

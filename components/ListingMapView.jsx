@@ -5,9 +5,8 @@ import { supabase } from "@/utils/supabase/client";
 import { toast } from "sonner";
 import GoogleMapSection from "./GoogleMapSection";
 
-const type = "Rent";
-
-const ListingMapView = ({ type }) => {
+const ListingMapView = () => {
+  const type = "Rent";
   const [listing, setListing] = useState([]);
   const [searchAddress, setSearchAddress] = useState("");
   const [bathCount, setBathCount] = useState(0);
@@ -57,7 +56,7 @@ const ListingMapView = ({ type }) => {
       `
       )
       .eq("active", true)
-      .eq("type", "Rent")
+      .eq("type", type)
       .order("id", { ascending: false });
     if (data) {
       setListing(data);

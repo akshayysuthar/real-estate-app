@@ -135,7 +135,7 @@ const EditListing = ({ params }) => {
           hoa: "",
           description: "",
           profileName: user?.imageUrl,
-          fullName: user?.fullName,
+          fullName: user?.firstName + user?.lastName,
         }}
         onSubmit={async (values) => {
           console.log(values);

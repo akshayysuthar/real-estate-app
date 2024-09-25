@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { UserButton, useUser } from "@clerk/nextjs";
 import { Plus } from "lucide-react";
 import Image from "next/image";
-import main from '@/public/logo.svg'
+import main from "@/public/logo.svg";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
@@ -13,10 +13,10 @@ const Header = () => {
   const path = usePathname();
   const { user, isSignedIn } = useUser();
 
-  // useEffect(() => {
-  //   console.log(path);
-  //   return () => {};
-  // }, []);
+  useEffect(() => {
+    // console.log(path);
+    // console.log(user);
+  }, []);
 
   return (
     <div
@@ -25,7 +25,14 @@ const Header = () => {
     >
       <div className="flex gap-10 items-center ">
         <Link href={"/"}>
-          <Image priority height={150} width={150} className="w-auto h-auto" src={main} alt="main-logo" />
+          <Image
+            priority
+            height={150}
+            width={150}
+            className="w-auto h-auto"
+            src={main}
+            alt="main-logo"
+          />
         </Link>
         <ul className="md:flex hidden gap-10">
           <Link href={"/forsale"}>

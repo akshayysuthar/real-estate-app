@@ -28,7 +28,7 @@ const GoogleMapSection = ({ data, listing }) => {
 
   // State to manage the center of the map
   const [mapCenter, setMapCenter] = useState([21.1924, 72.9551]); // Default to Surat, Gujarat coordinates
-  
+
   // Effect to update map center when coordinates change
   useEffect(() => {
     if (lat && lon) {
@@ -36,8 +36,11 @@ const GoogleMapSection = ({ data, listing }) => {
     }
   }, [lat, lon]);
 
+  // Handle both single listing and multiple listings
+  const isSingleListing = !Array.isArray(listing);
+
   // Render null if the listing is not yet loaded
-  if (!listing || listing.length === 0) {
+  if (!listing) {
     return <div>Loading map...</div>; // You can replace this with a loading spinner if desired
   }
 
@@ -52,37 +55,63 @@ const GoogleMapSection = ({ data, listing }) => {
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       />
 
-      {/* Markers for listings */}
-      {listing.map((property) => {
-        const propertyLat = parseFloat(property.coordinates.lat);
-        const propertyLon = parseFloat(property.coordinates.lon);
-        
-        return (
-          <Marker key={property.id} position={[propertyLat, propertyLon]}>
-            <Popup>
-              <div>
-                <h3>{property.address}</h3>
-                <p>{property.propertyType} - {property.price} INR</p>
-                <p>{property.description}</p>
-                {property.listingImages.length > 0 && (
-                  <img 
-                    src={property.listingImages[0].url} 
-                    alt="Property" 
-                    style={{ width: '100%', height: 'auto' }} 
-                  />
-                )}
-              </div>
-            </Popup>
-          </Marker>
-        );
-      })}
+      {/* Show a marker for a single listing if it's not an array */}
+      {isSingleListing
+        ? listing.coordinates && (
+            <Marker
+              key={listing.id}
+              position={[
+                parseFloat(listing.coordinates.lat),
+                parseFloat(listing.coordinates.lon),
+              ]}
+            >
+              <Popup>
+                <div className="gap-2">
+                  {listing.listingImages.length > 0 && (
+                    <img
+                      src={listing.listingImages[0].url}
+                      alt="Property"
+                      className="rounded-lg"
+                      style={{ width: "100%", height: "auto" }}
+                    />
+                  )}
+                  <h3>{listing.address}</h3>
+                  <p>
+                    {listing.propertyType} - {listing.price} INR
+                  </p>
+                </div>
+              </Popup>
+            </Marker>
+          )
+        : // Map through all listings if it's an array
+          listing.map((property) => {
+            const propertyLat = parseFloat(property.coordinates.lat);
+            const propertyLon = parseFloat(property.coordinates.lon);
+
+            return (
+              <Marker key={property.id} position={[propertyLat, propertyLon]}>
+                <Popup>
+                  <div className="gap-2">
+                    {property.listingImages.length > 0 && (
+                      <img
+                        src={property.listingImages[0].url}
+                        alt="Property"
+                        className="rounded-lg"
+                        style={{ width: "100%", height: "auto" }}
+                      />
+                    )}
+                    <h3>{property.address}</h3>
+                    <p>
+                      {property.propertyType} - {property.price} INR
+                    </p>
+                  </div>
+                </Popup>
+              </Marker>
+            );
+          })}
 
       {/* Marker for the searched location if available */}
-      {hasSearchData && (
-        <Marker position={[lat, lon]}>
-          <Popup>{placeName}</Popup> {/* Display the place name in the popup */}
-        </Marker>
-      )}
+      {hasSearchData && <Marker riseOnHover position={[lat, lon]}></Marker>}
     </Map>
   );
 };
