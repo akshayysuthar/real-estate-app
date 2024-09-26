@@ -31,39 +31,44 @@ const GoogleMapSection = ({ data, listing }) => {
 
   // Effect to update map center when coordinates change
   useEffect(() => {
-    if (lat && lon) {
+    if (listing) {
+      if (Array.isArray(listing)) {
+        if (listing.length === 1 && listing[0].coordinates) {
+          // For a single listing
+          const { lat, lon } = listing[0].coordinates;
+          setMapCenter([parseFloat(lat), parseFloat(lon)]);
+        } else if (listing.length > 1) {
+          // For multiple listings, calculate average center
+          const latSum = listing.reduce(
+            (sum, property) => sum + parseFloat(property.coordinates.lat),
+            0
+          );
+          const lonSum = listing.reduce(
+            (sum, property) => sum + parseFloat(property.coordinates.lon),
+            0
+          );
+          const avgLat = latSum / listing.length;
+          const avgLon = lonSum / listing.length;
+          setMapCenter([avgLat, avgLon]);
+        }
+      } else if (listing.coordinates) {
+        // For a single listing when it's not an array
+        const { lat, lon } = listing.coordinates;
+        setMapCenter([parseFloat(lat), parseFloat(lon)]);
+      }
+    } else if (lat && lon) {
+      // Set center based on search data if listing is not available
       setMapCenter([lat, lon]);
     }
-  }, [lat, lon]);
-
-  // Handle both single listing and multiple listings
-  const isSingleListing = !Array.isArray(listing);
+  }, [listing, lat, lon]);
 
   // Render null if the listing is not yet loaded
   if (!listing) {
     return <div>Loading map...</div>; // You can replace this with a loading spinner if desired
   }
 
-  // If it is a single listing, set map center to listing coordinates
-  useEffect(() => {
-    if (isSingleListing && listing.coordinates) {
-      const { lat, lon } = listing.coordinates;
-      setMapCenter([parseFloat(lat), parseFloat(lon)]);
-    } else if (!isSingleListing && listing.length > 0) {
-      // If multiple listings, calculate the average center
-      const latSum = listing.reduce(
-        (sum, property) => sum + parseFloat(property.coordinates.lat),
-        0
-      );
-      const lonSum = listing.reduce(
-        (sum, property) => sum + parseFloat(property.coordinates.lon),
-        0
-      );
-      const avgLat = latSum / listing.length;
-      const avgLon = lonSum / listing.length;
-      setMapCenter([avgLat, avgLon]);
-    }
-  }, [listing, isSingleListing]);
+  // Determine if it's a single listing or multiple listings
+  const isSingleListing = !Array.isArray(listing);
 
   return (
     <Map
