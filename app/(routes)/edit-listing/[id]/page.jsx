@@ -32,18 +32,10 @@ import {
 } from "@/components/ui/alert-dialog";
 
 const EditListing = ({ params }) => {
-  const {user} = useUser();
+  const { user } = useUser();
   const router = useRouter();
   const [loader, setLoader] = useState(false);
   const [listing, setListing] = useState([]);
-  // to get id from url
-  //   const params = usePathname();
-  // useEffect(() => {
-  //   // console.log("Id :" + params.id);
-  //   console.log(user);
-
-  //   user && verityUserRecord();
-  // }, [user]);
 
   // to make sure the other listing details can't be change by others
   const verityUserRecord = async () => {
@@ -92,8 +84,8 @@ const EditListing = ({ params }) => {
           price: values.price || 0,
           hoa: values.hoa || "None",
           description: values.description || "No description available",
-          profileImage: user?.imageUrl || "defaultImageUrl",  // Ensure this is not undefined
-          fullName: `${user?.firstName || "Anonymous"} ${user?.lastName || ""}`,  // Ensure fullName is valid
+          profileImage: user?.imageUrl || "defaultImageUrl", // Ensure this is not undefined
+          fullName: `${user?.firstName || "Anonymous"} ${user?.lastName || ""}`, // Ensure fullName is valid
         })
         .eq("id", params.id) // Assuming 'params.id' is defined and represents the correct listing ID
         .select(); // Selecting the updated data

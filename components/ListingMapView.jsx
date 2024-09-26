@@ -20,6 +20,17 @@ const ListingMapView = ({ type }) => {
     handleSearchCheck();
   }, []);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      toast.info(
+        "Note: The listing data is shown for demonstration purposes only."
+      );
+    }, 2000); // Show toast after 2 seconds
+
+    // Clean up the timer on component unmount
+    return () => clearTimeout(timer);
+  }, []);
+
   const handleSearchCheck = async () => {
     const searchTerm = searchAddress?.values?.sturcture_formatting?.main_text;
     const { data, error } = await supabase
@@ -65,7 +76,8 @@ const ListingMapView = ({ type }) => {
   };
 
   return (
-    <div className="flex flex-col lg:flex-row h-screen">
+    <div className="flex flex-col h-screen lg:flex-row">
+      {/* Listing Section */}
       <div className="lg:w-1/2 h-full overflow-y-auto p-4 transition-all duration-300 ease-in-out">
         <Listing
           listing={listing}
@@ -78,17 +90,30 @@ const ListingMapView = ({ type }) => {
           setSelectedCoordinates={setSelectedCoordinates}
         />
       </div>
-      <div className="lg:w-1/2 h-full transition-all duration-300 ease-in-out">
+
+      {/* Map Section for Large Screens */}
+      <div className="hidden lg:block mt-10 rounded-md lg:w-1/2 h-full transition-all duration-300 ease-in-out">
         <div className="sticky top-0 h-full">
           <GoogleMapSection data={selectedCoordinates} listing={listing} />
         </div>
       </div>
+
+      {/* Toggle Button */}
       <button
         className="fixed bottom-4 right-4 bg-primary text-white p-2 rounded-full shadow-lg lg:hidden z-50"
         onClick={() => setIsMapVisible(!isMapVisible)}
       >
         {isMapVisible ? "Hide Map" : "Show Map"}
       </button>
+
+      {/* Map Below Listing for Mobile, Hidden by Default */}
+      <div
+        className={`w-full  lg:hidden transition-all duration-300 ease-in-out ${
+          isMapVisible ? "block" : "hidden"
+        }`}
+      >
+        <GoogleMapSection data={selectedCoordinates} listing={listing} />
+      </div>
     </div>
   );
 };

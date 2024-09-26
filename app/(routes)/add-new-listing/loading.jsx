@@ -1,7 +1,8 @@
+import Loading from "@/components/Loading";
 import React from "react";
 
 const loading = () => {
-  return <div>loading...</div>;
+  return <Loading message="Fetching listings..." />;
 };
 
 export default loading;

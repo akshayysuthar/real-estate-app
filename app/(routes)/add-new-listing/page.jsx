@@ -30,7 +30,7 @@ const AddNewListing = () => {
 
   const nextHandler = async () => {
     setLoader(true);
-    
+
     // Ensure coordinates are present
     if (!location.lat || !location.lon) {
       setLoader(false);
@@ -62,16 +62,18 @@ const AddNewListing = () => {
   };
 
   return (
-    <div className="mt-10 md:mx-56 lg:mx-80 ">
-      <div className="p-10 flex flex-col gap-5  items-center justify-center">
-        <h2 className="font-bold text-2xl">Add New Listing</h2>
-        <div className="p-10 px-28 rounded-lg border shadow-md flex flex-col gap-5">
-          <h2 className="text-gray-500">
-            Enter Address which you want to list{" "}
+    <div className="mt-10 mx-4 md:mx-20 lg:mx-40">
+      <div className="p-6 flex flex-col gap-6 items-center justify-center">
+        <h2 className="font-bold text-xl md:text-2xl text-center">
+          Add New Listing
+        </h2>
+        <div className="p-6 md:p-10 lg:px-16 bg-white rounded-lg border shadow-md flex flex-col gap-5 w-full max-w-xl">
+          <h2 className="text-gray-600 text-center">
+            Enter the address you want to list
           </h2>
-          {/* Pass the handleLocationSelect callback to GooglePlacesSearch */}
+          {/* GooglePlacesSearch component */}
           <GooglePlacesSearch onSelectLocation={handleLocationSelect} />
-          <Button onClick={nextHandler}>
+          <Button onClick={nextHandler} className="w-full flex justify-center">
             {loader ? <Loader className="animate-spin" /> : "Next"}
           </Button>
         </div>

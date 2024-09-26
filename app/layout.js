@@ -1,7 +1,6 @@
 import localFont from "next/font/local";
 import "./globals.css";
-import 'leaflet/dist/leaflet.css';
-
+import "leaflet/dist/leaflet.css";
 
 import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "@/components/ui/sonner";
@@ -31,8 +30,8 @@ export default function RootLayout({ children }) {
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
           <Provider>
-            {children}
             <Toaster />
+            {children}
           </Provider>
         </body>
       </html>

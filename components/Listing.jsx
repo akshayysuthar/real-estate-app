@@ -19,7 +19,8 @@ const Listing = ({
   const [address, setAddress] = useState();
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 mx-auto">
+      {/* Search Bar and Button */}
       <div className="flex flex-col sm:flex-row gap-3 items-center">
         <div className="w-full sm:w-3/4">
           <GooglePlacesSearch
@@ -32,12 +33,14 @@ const Listing = ({
         </div>
         <Button
           onClick={handleSearchCheck}
-          className="w-full sm:w-1/4 flex gap-2 justify-center"
+          className="w-full sm:w-1/4 flex gap-2 justify-center bg-primary text-white py-2 rounded-lg hover:bg-primary-dark transition-all"
         >
           <Search className="w-4 h-4" />
           <span className="hidden sm:inline">Search</span>
         </Button>
       </div>
+
+      {/* Filter Section */}
       <FilterSection
         setBathCount={setBathCount}
         setBedCount={setBedCount}
@@ -45,26 +48,28 @@ const Listing = ({
         setPackingCount={setPackingCount}
       />
 
+      {/* Address Section */}
       {address && (
-        <div className="bg-gray-100 p-3 rounded-lg">
+        <div className="bg-gray-100 p-3 rounded-lg shadow-md">
           <h2 className="text-xl font-semibold">
             Found {listing?.length} results
-            {/* <span className="text-primary font-bold"> in {address}</span> */}
           </h2>
         </div>
       )}
+
+      {/* Listings Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-4">
         {listing?.length > 0
           ? listing.map((item, index) => (
               <Link href={`/view-listing/${item.id}`} key={index}>
-                <div className="bg-white p-3 hover:shadow-lg transition-shadow duration-300 rounded-lg border border-gray-200 hover:border-primary cursor-pointer">
-                  <div className="relative h-48 mb-3">
+                <div className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 border border-gray-200 hover:border-primary cursor-pointer">
+                  <div className="relative h-48 mb-3 rounded-lg overflow-hidden">
                     <Image
                       src={item.listingImages[0].url}
                       layout="fill"
                       objectFit="cover"
                       alt={item.address}
-                      className="rounded-lg"
+                      className="rounded-lg transition-transform transform hover:scale-105 duration-300"
                     />
                   </div>
                   <div className="space-y-2">
@@ -93,7 +98,7 @@ const Listing = ({
           : [1, 2, 3, 4, 5].map((item, index) => (
               <div
                 key={index}
-                className="h-64 w-full bg-gradient-to-r from-gray-300 via-gray-400 to-gray-500 animate-pulse rounded-lg"
+                className="h-64 w-full bg-gradient-to-r from-gray-200 via-gray-300 to-gray-400 rounded-lg animate-gradient-x"
               ></div>
             ))}
       </div>
