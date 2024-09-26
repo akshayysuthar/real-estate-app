@@ -44,6 +44,27 @@ const GoogleMapSection = ({ data, listing }) => {
     return <div>Loading map...</div>; // You can replace this with a loading spinner if desired
   }
 
+  // If it is a single listing, set map center to listing coordinates
+  useEffect(() => {
+    if (isSingleListing && listing.coordinates) {
+      const { lat, lon } = listing.coordinates;
+      setMapCenter([parseFloat(lat), parseFloat(lon)]);
+    } else if (!isSingleListing && listing.length > 0) {
+      // If multiple listings, calculate the average center
+      const latSum = listing.reduce(
+        (sum, property) => sum + parseFloat(property.coordinates.lat),
+        0
+      );
+      const lonSum = listing.reduce(
+        (sum, property) => sum + parseFloat(property.coordinates.lon),
+        0
+      );
+      const avgLat = latSum / listing.length;
+      const avgLon = lonSum / listing.length;
+      setMapCenter([avgLat, avgLon]);
+    }
+  }, [listing, isSingleListing]);
+
   return (
     <Map
       center={mapCenter} // Use mapCenter state for centering the map
@@ -69,7 +90,11 @@ const GoogleMapSection = ({ data, listing }) => {
                 <div className="gap-2">
                   {listing.listingImages.length > 0 && (
                     <img
-                      src={listing.listingImages[0].url}
+                      src={
+                        listing.listingImages[0].url.startsWith("/public/")
+                          ? listing.listingImages[0].url
+                          : `/public/${listing.listingImages[0].url}`
+                      }
                       alt="Property"
                       className="rounded-lg"
                       style={{ width: "100%", height: "auto" }}
@@ -94,7 +119,11 @@ const GoogleMapSection = ({ data, listing }) => {
                   <div className="gap-2">
                     {property.listingImages.length > 0 && (
                       <img
-                        src={property.listingImages[0].url}
+                        src={
+                          property.listingImages[0].url.startsWith("/public/")
+                            ? property.listingImages[0].url
+                            : `/public/${property.listingImages[0].url}`
+                        }
                         alt="Property"
                         className="rounded-lg"
                         style={{ width: "100%", height: "auto" }}

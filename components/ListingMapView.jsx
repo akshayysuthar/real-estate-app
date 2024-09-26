@@ -5,15 +5,16 @@ import { supabase } from "@/utils/supabase/client";
 import { toast } from "sonner";
 import GoogleMapSection from "./GoogleMapSection";
 
-const ListingMapView = () => {
-  const type = "Rent";
+const ListingMapView = ({ type }) => {
   const [listing, setListing] = useState([]);
   const [searchAddress, setSearchAddress] = useState("");
   const [bathCount, setBathCount] = useState(0);
   const [bedCount, setBedCount] = useState(0);
   const [packingCount, setPackingCount] = useState(0);
   const [homeType, setHomeType] = useState(0);
-  const [selectedCoordinates, setSelectedCoordinates] = useState(null); // selected coordinates
+  const [selectedCoordinates, setSelectedCoordinates] = useState(null);
+  const [isMapVisible, setIsMapVisible] = useState(false);
+
   useEffect(() => {
     getLatestListing();
     handleSearchCheck();
@@ -25,17 +26,13 @@ const ListingMapView = () => {
       .from("listing")
       .select(
         `*,
-      listingImages(
-        url,
+        listingImages(
+          url,
           listing_Id
-  )`
+        )`
       )
       .eq("active", true)
-      .eq("type", "Rent")
-      // .eq("bedroom", bedCount)
-      // .eq("bathroom", bathCount)
-      // .eq("parking", packingCount)
-      // .eq("propertyType", homeType)
+      .eq("type", type)
       .like("address", "%" + searchAddress + "%")
       .order("id", { ascending: false });
 
@@ -51,7 +48,7 @@ const ListingMapView = () => {
         `*,
         listingImages(
           url,
-            listing_Id
+          listing_Id
         )
       `
       )
@@ -60,31 +57,38 @@ const ListingMapView = () => {
       .order("id", { ascending: false });
     if (data) {
       setListing(data);
-      //   console.log(data);
     }
     if (error) {
       toast("Server Side error");
-      console.error();
+      console.error(error);
     }
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mx-10 items-center justify-center">
-      <div className="overflow-y-scroll h-screen no-scrollbar">
+    <div className="flex flex-col lg:flex-row h-screen">
+      <div className="lg:w-1/2 h-full overflow-y-auto p-4 transition-all duration-300 ease-in-out">
         <Listing
           listing={listing}
           handleSearchCheck={handleSearchCheck}
-          searchAddress={(v) => setSearchAddress(v)}
-          // setBathCount={setBathCount}
-          // setBedCount={setBedCount}
-          // setHomeType={setHomeType}
-          // setPackingCount={setPackingCount}
+          searchAddress={setSearchAddress}
+          setBathCount={setBathCount}
+          setBedCount={setBedCount}
+          setHomeType={setHomeType}
+          setPackingCount={setPackingCount}
           setSelectedCoordinates={setSelectedCoordinates}
         />
       </div>
-      <div className="px-5 py-10 rounded-lg sticky h-screen md:w-[350px] lg:w-[550px] xl:w-[650px] ">
-        <GoogleMapSection data={selectedCoordinates} listing={listing} />
+      <div className="lg:w-1/2 h-full transition-all duration-300 ease-in-out">
+        <div className="sticky top-0 h-full">
+          <GoogleMapSection data={selectedCoordinates} listing={listing} />
+        </div>
       </div>
+      <button
+        className="fixed bottom-4 right-4 bg-primary text-white p-2 rounded-full shadow-lg lg:hidden z-50"
+        onClick={() => setIsMapVisible(!isMapVisible)}
+      >
+        {isMapVisible ? "Hide Map" : "Show Map"}
+      </button>
     </div>
   );
 };

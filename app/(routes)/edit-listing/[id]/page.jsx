@@ -32,14 +32,16 @@ import {
 } from "@/components/ui/alert-dialog";
 
 const EditListing = ({ params }) => {
-  const { user } = useUser();
+  const {user} = useUser();
   const router = useRouter();
   const [loader, setLoader] = useState(false);
   const [listing, setListing] = useState([]);
   // to get id from url
   //   const params = usePathname();
   useEffect(() => {
-    console.log("Id :" + params.id);
+    // console.log("Id :" + params.id);
+    console.log(user);
+
     user && verityUserRecord();
   }, [user]);
 
@@ -62,8 +64,9 @@ const EditListing = ({ params }) => {
   };
 
   const handleSaveListing = async (values) => {
-    console.log("Values:", values); // Check if the values object contains all required fields
+    // console.log("Values:", values); // Debug to verify incoming values
 
+    // Validation: Ensure 'type' is present (or any other required fields)
     if (!values || !values.type) {
       console.error(
         "Error: Missing required listing values, particularly type."
@@ -71,48 +74,66 @@ const EditListing = ({ params }) => {
       return;
     }
 
-    const { data, error } = await supabase
-      .from("listing")
-      .update([
-        {
-          type: values.type || "defaultType", // Provide a default value for type
-          propertyType: values.propertyType || "defaultPropertyType", // Default fallback if missing
-          bedroom: values.bedroom || 0, // Add default for numeric values like bedroom
+    try {
+      // Start loader before making async call
+      setLoader(true);
+
+      const { data, error } = await supabase
+        .from("listing") // Ensure your table name is correct
+        .update({
+          type: values.type || "defaultType",
+          propertyType: values.propertyType || "defaultPropertyType",
+          bedroom: values.bedroom || 0,
           bathroom: values.bathroom || 0,
-          builtIn: values.builtIn || "N/A", // Default for strings
+          builtIn: values.builtIn || "N/A",
           parking: values.parking || 0,
           lotSize: values.lotSize || 0,
           area: values.area || 0,
           price: values.price || 0,
           hoa: values.hoa || "None",
           description: values.description || "No description available",
-        },
-      ])
-      .eq("id", params.id)
-      .select();
+          profileImage: user?.imageUrl || "defaultImageUrl",  // Ensure this is not undefined
+          fullName: `${user?.firstName || "Anonymous"} ${user?.lastName || ""}`,  // Ensure fullName is valid
+        })
+        .eq("id", params.id) // Assuming 'params.id' is defined and represents the correct listing ID
+        .select(); // Selecting the updated data
 
-    if (error) {
+      if (error) {
+        throw error; // Error will be caught by catch block
+      }
+
+      console.log("Listing updated:", data);
+      toast("Listing updated successfully");
+    } catch (error) {
       console.error("Error updating listing:", error.message);
+    } finally {
+      // Stop loader after completion
       setLoader(false);
-      return;
-    }
-
-    if (data) {
-      setLoader(false);
-      console.log(data);
-      toast("Listing updated");
     }
   };
 
   const publishBtnHandler = async () => {
-    const { data, error } = await supabase
-      .from("listing")
-      .update({ active: "true" })
-      .eq("id", params?.id)
-      .select();
-    if (data) {
+    try {
+      // Start loader
+      setLoader(true);
+
+      const { data, error } = await supabase
+        .from("listing")
+        .update({ active: "true" })
+        .eq("id", params?.id)
+        .select(); // Selecting the updated data
+
+      if (error) {
+        throw error;
+      }
+
+      console.log("Listing published:", data);
+      toast("Listing published successfully");
+    } catch (error) {
+      console.error("Error publishing listing:", error.message);
+    } finally {
+      // Stop loader
       setLoader(false);
-      toast("Listing published");
     }
   };
 
@@ -134,11 +155,10 @@ const EditListing = ({ params }) => {
           price: "",
           hoa: "",
           description: "",
-          profileName: user?.imageUrl,
-          fullName: user?.firstName + user?.lastName,
+          profileImage: user?.imageUrl, // Correct key for image URL
+          fullName: user?.fullName,
         }}
         onSubmit={async (values) => {
-          console.log(values);
           await handleSaveListing(values);
         }}
       >

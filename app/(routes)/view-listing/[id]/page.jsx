@@ -1,4 +1,5 @@
 "use client";
+
 import Details from "@/components/Details";
 import Slider from "@/components/Slider";
 import { supabase } from "@/utils/supabase/client";
