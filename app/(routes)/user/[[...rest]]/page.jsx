@@ -136,11 +136,7 @@ export default function UserProfileWithListings() {
               <h3 className="text-lg font-semibold mb-4">About Me</h3>
               <p className="text-gray-600">
                 As a dedicated real estate professional with 5 years of
-                experience, I'm passionate about helping clients find their
-                dream homes and make smart investments. My expertise in the
-                local market, combined with a client-first approach, ensures a
-                smooth and successful real estate journey for everyone I work
-                with.
+                experience.
               </p>
             </div>
             <div className="mt-8 flex justify-end">
