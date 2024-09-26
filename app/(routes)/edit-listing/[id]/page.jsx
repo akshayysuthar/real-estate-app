@@ -38,12 +38,12 @@ const EditListing = ({ params }) => {
   const [listing, setListing] = useState([]);
   // to get id from url
   //   const params = usePathname();
-  useEffect(() => {
-    // console.log("Id :" + params.id);
-    console.log(user);
+  // useEffect(() => {
+  //   // console.log("Id :" + params.id);
+  //   console.log(user);
 
-    user && verityUserRecord();
-  }, [user]);
+  //   user && verityUserRecord();
+  // }, [user]);
 
   // to make sure the other listing details can't be change by others
   const verityUserRecord = async () => {
